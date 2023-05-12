@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 
@@ -30,11 +30,29 @@ async function run() {
         await client.connect();
 
         const doctorsCollection = client.db('doctorsDB').collection('doctors');
+        const bookingCollection = client.db('doctorsDB').collection('bookings');
 
         // Create a new json send client site
         app.get('/doctors', async (req, res) => {
             const cursor = doctorsCollection.find();
             const result = await cursor.toArray();
+            res.send(result);
+        })
+        // id json format 
+        app.get('/doctors/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const object = {
+                projection: { title: 1, price: 1, description: 1, img: 1, name: 1 }
+            }
+            const result = await doctorsCollection.findOne(query);
+            res.send(result);
+        })
+        // Bookings Json Response
+        app.post('/booking', async (req, res) => {
+            const booking = req.body;
+            // console.log(booking);
+            const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
 
