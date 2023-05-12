@@ -48,7 +48,7 @@ async function run() {
             const result = await doctorsCollection.findOne(query);
             res.send(result);
         })
-        // Bookings Json Response
+        // Bookings Json 
         app.post('/booking', async (req, res) => {
             const booking = req.body;
             // console.log(booking);
